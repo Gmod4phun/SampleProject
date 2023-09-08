@@ -44,16 +44,18 @@
   </div>
 </template>
   
-<script>
+<script lang="ts">
 
-import PositionService from '../services/PositionService.ts';
+import PositionService from '../services/PositionService';
+
+import {Position} from '../interfaces/CustomDataTypes';
 
 const positionService = new PositionService();
 
 export default {
   data() {
     return {
-      positions: [],
+      positions: Array<Position>(),
       error: false,
       loaded: false
     }
@@ -70,14 +72,14 @@ export default {
         const response = await positionService.getPositions()
 
         this.positions = response.data
-        this.eror = false
+        this.error = false
         this.loaded = true
       } catch {
         this.error = true
         this.loaded = true
       }
     },
-    async onClickPositionDelete(name) {
+    async onClickPositionDelete(name: string) {
       try {
         // await axios.delete(`${API_URL_POSITION}/${name}`)
         await positionService.deletePosition(name)
@@ -87,7 +89,7 @@ export default {
         alert("Failed to delete position. Maybe it's referenced by contracts.")
       }
     },
-    showConfirm(name) {
+    showConfirm(name: string) {
       const result = confirm(`Are you sure you want to delete the position ${name}?`);
       if (result) {
         this.onClickPositionDelete(name)

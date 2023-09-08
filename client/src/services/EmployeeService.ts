@@ -1,12 +1,13 @@
 import axios from 'axios'
+import { Employee } from '../interfaces/CustomDataTypes'
 const resourcePath = "Employee"
 
 export default class EmployeeService {
-    async updateEmployee(data: object) {
+    async updateEmployee(data: Employee) {
         return axios.patch(`${resourcePath}/${data.id}`, data)
     }
 
-    async addEmployee(data: object) {
+    async addEmployee(data: Employee) {
         return axios.post(`${resourcePath}/add`, data)
     }
 

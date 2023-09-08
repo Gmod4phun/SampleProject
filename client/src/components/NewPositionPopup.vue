@@ -15,12 +15,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 
 import useValidate from '@vuelidate/core'
 import {required, minLength} from '@vuelidate/validators'
 
-import PositionService from '../services/PositionService.ts';
+import PositionService from '../services/PositionService';
 
 const positionService = new PositionService();
 

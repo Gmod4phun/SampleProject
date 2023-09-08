@@ -24,6 +24,7 @@
   import NavigationButtons from './components/NavigationButtons.vue'
   import NewPositionPopup from './components/NewPositionPopup.vue'
   import PositionList from './components/PositionList.vue'
+  import { Employee, Position, Contract } from './interfaces/CustomDataTypes'
 
   export default {
   name: "App",
@@ -38,7 +39,7 @@
     return {
       activeTab: 1,
       showEmployeeDetail: false,
-      employeeData: {},
+      employeeData: {} as Employee,
       detailMode: "view",
       showNewPosPopup: false
     }
@@ -51,7 +52,7 @@
         this.$refs.listPositions.getPositions()
       }
     },
-    onClickEmployee(employee: JSON, detailMode: string) {
+    onClickEmployee(employee: Employee, detailMode: string) {
       this.detailMode = detailMode
 
       if (detailMode == 'add') {
@@ -72,15 +73,16 @@
       return currentDate
     },
     onClickEmployeeAdd() {
-      this.employeeData = {
-        firstName: "",
-        lastName: "",
-        address: "",
-        birthDate: "",
-        startDate: this.getCurrentDate(),
-        position: {name:""},
-        wage: null
-      }
+      let emp = {} as Employee
+      emp.firstName = ""
+      emp.lastName = ""
+      emp.address = ""
+      emp.position = {} as Position
+      emp.position.name = ""
+      emp.wage = 0
+      emp.startDate = this.getCurrentDate()
+
+      this.employeeData = emp
       this.showEmployeeDetail = true
     },
     refreshLists() {

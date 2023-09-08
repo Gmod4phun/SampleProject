@@ -28,7 +28,7 @@
 
         <div class="row">
             <label for="birthDate">Birth Date</label>
-            <input type="date" id="birthDate" :disabled="!canEdit()" v-model.trim.lazy="employeeData.birthDate">
+            <input type="date" id="birthDate" :disabled="!canEdit()" v-model="employeeData.birthDate">
         </div>
         <div class="errorMessage" v-if="v$.employeeData.birthDate.$error">
             {{ v$.employeeData.birthDate.$errors[0].$message }}
@@ -39,7 +39,7 @@
 
             <div class="row">
                 <label for="startDate">Start Date</label>
-                <input type="date" id="startDate" :disabled="!canEdit()" v-model.trim.lazy="employeeData.startDate">
+                <input type="date" id="startDate" :disabled="!canEdit()" v-model="employeeData.startDate">
             </div>
             <div class="errorMessage" v-if="v$.employeeData.startDate.$error">
                 {{ v$.employeeData.startDate.$errors[0].$message }}
@@ -74,8 +74,8 @@
         </div>
 
 
-        <button class="bottomButton" v-if="this.detailMode=='edit'" @click="saveChanges">Save changes</button>
-        <button class="bottomButton" v-if="this.detailMode=='add'" @click="confirmAdd">Confirm</button>
+        <button class="bottomButton" v-if="detailMode=='edit'" @click="saveChanges">Save changes</button>
+        <button class="bottomButton" v-if="detailMode=='add'" @click="confirmAdd">Confirm</button>
         <button class="bottomButton" @click="$emit('closeDetail')">{{ !canEdit() ? "Close" : "Cancel" }}</button>
 
         <div v-if="detailMode!='add'">
@@ -96,14 +96,23 @@
     
 </template>
 
+<script setup lang="ts">
+    defineProps<{
+        employeeData: Employee,
+        detailMode: String,
+    }>()
+</script>
+
 <script lang="ts">
 
 import useValidate from '@vuelidate/core'
 import {required, decimal, minValue, maxValue, helpers} from '@vuelidate/validators'
 
-import EmployeeService from '../services/EmployeeService.ts';
-import PositionService from '../services/PositionService.ts';
-import ContractService from '../services/ContractService.ts';
+import EmployeeService from '../services/EmployeeService';
+import PositionService from '../services/PositionService';
+import ContractService from '../services/ContractService';
+
+import {Employee, Position, Contract} from '../interfaces/CustomDataTypes';
 
 const employeeService = new EmployeeService();
 const positionService = new PositionService();
@@ -113,8 +122,10 @@ export default {
     data() {
         return {
             v$: useValidate(),
-            positions: [],
-            employeeContracts: []
+            positions: Array<Position>(),
+            employeeContracts: Array<Contract>()
+            // positions: [],
+            // employeeContracts: []
         }
     },
     validations() {
@@ -140,13 +151,19 @@ export default {
             }
         }
     },
-    props: { employeeData: Object, detailMode: String},
+    // props: {
+    //     // employeeData: {
+    //     //     type: Employee
+    //     // },
+    //     // employeeData: Employee,
+    //     detailMode: String,
+    // },
     emits: ['closeDetail', 'addedEmployee', 'updatedEmployee'],
     created() {
         this.getPositions()
 
         if (this.detailMode!='add') {
-            this.getContractsForEmployee(this.employeeData.id)
+            this.getContractsForEmployee(this.employeeData.id!)
         }
     },
     methods: {
@@ -162,7 +179,7 @@ export default {
             try {
                 await employeeService.updateEmployee(this.employeeData)
 
-                this.getContractsForEmployee(this.employeeData.id)
+                this.getContractsForEmployee(this.employeeData.id!)
                 this.$emit('updatedEmployee')
             }
             catch {
@@ -170,7 +187,7 @@ export default {
             }
         },
         confirmAdd() {
-            console.log("Add employee")
+            // console.log("Add employee")
             // console.log(this.employeeData)
             this.addEmployee()
         },

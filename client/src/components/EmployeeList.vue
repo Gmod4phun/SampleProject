@@ -13,7 +13,7 @@
     <div v-if="!error && loaded">
 
       <div v-if="!previous">
-        <button class="newEmpButton" @click="clickEmployee(employee, 'add')">Add new employee</button>
+        <button class="newEmpButton" @click="clickEmployeeAdd()">Add new employee</button>
       </div>
 
       <div v-if="employees.length == 0">
@@ -66,16 +66,17 @@
   </div>
 </template>
   
-<script>
+<script lang="ts">
 
-import EmployeeService from '../services/EmployeeService.ts';
+import EmployeeService from '../services/EmployeeService';
+import {Employee, Position, Contract} from '../interfaces/CustomDataTypes';
 
 const employeeService = new EmployeeService();
 
 export default {
   data() {
     return {
-      employees: [],
+      employees: Array<Employee>(),
       error: false,
       loaded: false
     }
@@ -101,20 +102,20 @@ export default {
         this.loaded = true
       }
     },
-    async deleteEmployee(id) {
+    async deleteEmployee(id: number) {
       try {
         await employeeService.deleteEmployee(id)
         this.getEmployees()
       } catch {}
     },
-    async archiveEmployee(id) {
+    async archiveEmployee(id: number) {
       try {
         await employeeService.archiveEmployee(id)
         this.getEmployees()
         this.$emit("archivedEmployee")
       } catch {}
     },
-    onDeleteClick(id, forceDelete) {
+    onDeleteClick(id: number, forceDelete: boolean) {
       if (forceDelete) {
         this.deleteEmployee(id)
       }
@@ -122,28 +123,31 @@ export default {
         this.archiveEmployee(id)
       }
     },
-    clickEmployee(employee, detailMode) {
+    clickEmployee(employee: Employee, detailMode: string) {
       this.$emit('onClickEmployee', employee, detailMode)
     },
-    showConfirmDelete(employee) {
+    clickEmployeeAdd() {
+      this.$emit('onClickEmployee', null, 'add')
+    },
+    showConfirmDelete(employee: Employee) {
       const result = confirm(`Are you sure you want to delete the employee ${employee.fullName}?`);
       if (result) {
         this.showConfirmArchive(employee)
       }
     },
-    showConfirmArchive(employee) {
+    showConfirmArchive(employee: Employee) {
       const result = confirm(`Do you want to archive the employee ${employee.fullName}?`);
       if (result) {
-        this.archiveEmployee(employee.id)
+        this.archiveEmployee(employee.id!)
       }
       else {
-        this.deleteEmployee(employee.id)
+        this.deleteEmployee(employee.id!)
       }
     },
-    showConfirmDeletePermanent(employee) {
+    showConfirmDeletePermanent(employee: Employee) {
       const result = confirm(`Are you sure you want to permanently delete the employee ${employee.fullName}?`);
       if (result) {
-        this.deleteEmployee(employee.id)
+        this.deleteEmployee(employee.id!)
       }
     },
   }
