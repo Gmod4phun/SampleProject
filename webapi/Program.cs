@@ -23,7 +23,7 @@ void PopulateDatabaseWithPositionsIfEmpty() {
 	}
 }
 
-PopulateDatabaseWithPositionsIfEmpty();
+// PopulateDatabaseWithPositionsIfEmpty();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +50,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy  =>
                       {
-                          policy.WithOrigins("http://localhost:4000", "http://localhost:8080").AllowAnyHeader().AllowAnyMethod();
+                        //   policy.WithOrigins("http://localhost:4000", "http://localhost:8080").AllowAnyHeader().AllowAnyMethod();
+						policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                       });
 });
 
@@ -71,6 +72,19 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthorization();
 
 app.MapControllers();
+
+/*
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<MyDbContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
+*/
 
 app.Run();
 
