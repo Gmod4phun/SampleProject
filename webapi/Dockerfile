@@ -8,4 +8,7 @@ RUN dotnet publish "WebApi.csproj" -c Release -o /publish
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 as final
 WORKDIR /app
 COPY --from=build /publish .
+
+EXPOSE 5000 80
+
 ENTRYPOINT [ "dotnet", "WebApi.dll" ]
