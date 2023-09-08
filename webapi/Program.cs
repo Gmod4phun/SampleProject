@@ -73,18 +73,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<MyDbContext>();
-    if (context.Database.GetPendingMigrations().Any())
-    {
-        context.Database.Migrate();
-    }
-}
-*/
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+
+//     var context = services.GetRequiredService<MyDbContext>();
+//     if (context.Database.GetPendingMigrations().Any())
+//     {
+//         context.Database.Migrate();
+//     }
+// }
+
 
 app.Run();
 
